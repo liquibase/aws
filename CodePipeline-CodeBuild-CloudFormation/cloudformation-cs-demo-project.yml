@@ -1,0 +1,442 @@
+---
+# Copyright Liquibase, Inc. or its affiliates. All Rights Reserved.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Template to build a Liquibase Pro project with Code Pipeline in AWS.
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "Project Configuration"
+        Parameters: 
+          - ProjectName
+      - 
+        Label: 
+          default: "Liquibase Configuration"
+        Parameters: 
+          - S3Bucket
+          - LiquibaseProKey
+      - 
+        Label: 
+          default: "Amazon Configuration"
+        Parameters: 
+          - VPC
+          - DBSubnetGroupName
+
+      - Label:
+          default: "Database Configuration"
+        Parameters:
+          - DatabaseUsernameTest
+          - DatabasePasswordTest
+          - DatabaseUsernameStage
+          - DatabasePasswordStage
+          - DatabaseUsernameProd
+          - DatabasePasswordProd
+    ParameterLabels: 
+      S3Bucket: 
+        default: "Name of S3 Bucket housing Liquibase project files"
+Parameters:
+  DBSubnetGroupName:
+    Default: 
+    Description: A DB subnet group to associate with the DB instance. 
+    Type: String
+  LiquibaseProKey:
+    Default: 
+    Description: Enter your Liquibase Pro key here. If you don't have one, visit https://download.liquibase.org/liquibase-pro-trial-request-form/ to start a free trial!
+    Type: String
+  DatabaseUsernameProd:
+    Default:
+    Description: Database Username for Production
+    Type: String
+  DatabasePasswordProd:
+    Default:
+    Description: Database Password for Production
+    Type: String
+  DatabaseUsernameStage:
+    Default:
+    Description: Database Username for Staging
+    Type: String
+  DatabasePasswordStage:
+    Default:
+    Description: Database Password for Staging
+    Type: String
+  DatabaseUsernameTest:
+    Default:
+    Description: Database Username for Test
+    Type: String
+  DatabasePasswordTest:
+    Default:
+    Description: Database Password for Test
+    Type: String
+  ProjectName:
+    AllowedPattern: '[a-z0-9.-]*'
+    ConstraintDescription: Project Name must contain only lowercase a-z, 0-9 and - characters.
+    Default: liquibase-pro-sample
+    Description: Define the Name of the Project such as test/data etc. (Value must be comprised only of lowercase a-z, 0-9, .-)
+    Type: String
+  S3Bucket:
+    Default: 
+    Description: Define the Name of the S3 Bucket containing CodeCommit contents
+    Type: String
+  VPC:
+    Description: Specifies which VPC for this project
+    Type: AWS::EC2::VPC::Id
+Resources:
+  AWSSecrets:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: AWS secrets for project
+      Name: !Sub ${ProjectName}
+      SecretString: !Sub '{"USERNAME_PROD":"${DatabaseUsernameProd}","PASSWORD_PROD":"${DatabasePasswordProd}","LIQUIBASE_PRO_KEY":"${LiquibaseProKey}","USERNAME_TEST":"${DatabaseUsernameTest}","PASSWORD_TEST":"${DatabasePasswordTest}","USERNAME_STAGE":"${DatabaseUsernameStage}","PASSWORD_STAGE":"${DatabasePasswordStage}"}'
+  CodeCommitRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      Code:
+        BranchName: master
+        S3: 
+          Bucket: !Ref 'S3Bucket'
+          Key: 'codebuild-cs-demo-project.zip'
+      RepositoryDescription: !Sub ${ProjectName}CodeRepo
+      RepositoryName: !Sub ${ProjectName}coderepo
+  CodeBuildImageRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeCommitReadOnly
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      Path: /
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:DescribeLogGroups
+                  - logs:CreateLogStream
+                  - logs:DescribeLogStreams
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource:
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
+            Version: '2012-10-17'
+          PolicyName: !Sub
+            - ${Param1}-RolePolicy
+            - Param1: !Sub ${ProjectName}-CodeBuild-ContainerImage
+      RoleName: !Sub ${ProjectName}-CodeBuild-Role
+  CodeBuildImageJob:
+    Type: AWS::CodeBuild::Project
+    DependsOn: CodeBuildImageRole
+    Properties:
+      Artifacts:
+          ArtifactIdentifier: String
+          EncryptionDisabled: false
+          Location: !Ref 'S3Bucket'
+          Name: codebuild-snapshot.zip
+          NamespaceType: NONE
+          OverrideArtifactName: true
+          Packaging: ZIP
+          Path: ''
+          Type: S3
+      Description: CodeBuild Project to pull from a GIT repository containing
+        Liquibase project and a "buildspec.yml" file.
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: registry.hub.docker.com/liquibase/liquibase:4.4.2
+        ImagePullCredentialsType: SERVICE_ROLE
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      LogsConfig:
+          CloudWatchLogs: 
+              Status: ENABLED
+          S3Logs: 
+              EncryptionDisabled: false
+              Status: DISABLED            
+      Name: !Sub '${ProjectName}-CodeBuild-Job'
+      ServiceRole: !Sub ${ProjectName}-CodeBuild-Role
+      Source:
+        GitCloneDepth: 1
+        GitSubmodulesConfig: 
+          FetchSubmodules: false
+        InsecureSsl: false
+        Location: !GetAtt CodeCommitRepository.CloneUrlHttp
+        Type: CODECOMMIT
+      SourceVersion: refs/heads/master         
+      Tags:
+        - Key: Project
+          Value: !Ref 'ProjectName'
+  AmazonCloudWatchEventRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+  AmazonCloudWatchEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      EventPattern:
+        source:
+          - aws.codecommit
+        detail-type:
+          - CodeCommit Repository State Change
+        resources:
+          - !Join 
+            - ''
+            - - 'arn:aws:codecommit:'
+              - !Ref 'AWS::Region'
+              - ':'
+              - !Ref 'AWS::AccountId'
+              - ':'
+              - !Sub ${ProjectName}coderepo
+        detail:
+          event:
+            - referenceCreated
+            - referenceUpdated
+          referenceType:
+            - branch
+          referenceName:
+            - master
+      Targets:
+        - Arn: !Join 
+            - ''
+            - - 'arn:aws:codepipeline:'
+              - !Ref 'AWS::Region'
+              - ':'
+              - !Ref 'AWS::AccountId'
+              - ':'
+              - !Ref CodePipelineImage
+          RoleArn: !GetAtt 
+            - AmazonCloudWatchEventRole
+            - Arn
+          Id: codepipeline-CodePipelineImage
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+        Version: '2012-10-17'
+      MaxSessionDuration: 3600
+      Path: /
+      Policies:
+        - PolicyName: AWS-CodePipeline-Service-3
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'codecommit:CancelUploadArchive'
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:GetCommit'
+                  - 'codecommit:GetUploadArchiveStatus'
+                  - 'codecommit:UploadArchive' 
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: '*'
+      RoleName: !Sub ${ProjectName}-CodePipeline-Role
+  CodePipelineImage:    
+      Type: AWS::CodePipeline::Pipeline
+      Properties: 
+          ArtifactStore: 
+            Location: !Ref 'S3Bucket'
+            Type: S3
+          Name: !Sub '${ProjectName}-CodePipeline'
+          RoleArn: !GetAtt 
+            - CodePipelineServiceRole
+            - Arn
+          Stages:
+          - Actions:
+            - ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+                Version: '1'
+              Configuration:
+                BranchName: master
+                OutputArtifactFormat: CODE_ZIP
+                PollForSourceChanges: 'false'
+                RepositoryName: !Sub ${ProjectName}coderepo
+              InputArtifacts: []
+              Name: Source
+              Namespace: SourceVariables
+              OutputArtifacts:
+              - Name: SourceArtifact
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Source
+          - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                EnvironmentVariables: !Sub 
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_TEST","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_TEST","type":"SECRETS_MANAGER"}]'
+                - { Endpoint: !GetAtt RDSInstanceTest.Endpoint.Address }
+                ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
+              InputArtifacts:
+              - Name: SourceArtifact
+              Name: Build
+              OutputArtifacts: []
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Build
+          - Actions:
+            - ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: '1'
+              Configuration: {}
+              InputArtifacts: []
+              Name: Approval-Stage
+              OutputArtifacts: []
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Approval-Stage
+          - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                EnvironmentVariables: !Sub 
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_STAGE","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_STAGE","type":"SECRETS_MANAGER"}]'
+                - { Endpoint: !GetAtt RDSInstanceStage.Endpoint.Address }
+                ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
+              InputArtifacts:
+              - Name: SourceArtifact
+              Name: Deploy-Stage
+              OutputArtifacts: []
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Deploy-Stage
+          - Actions:
+            - ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: '1'
+              Configuration: {}
+              InputArtifacts: []
+              Name: Approval-Prod
+              OutputArtifacts: []
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Approval-Prod
+          - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                EnvironmentVariables: !Sub 
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_PROD","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_PROD","type":"SECRETS_MANAGER"}]'
+                - { Endpoint: !GetAtt RDSInstanceProd.Endpoint.Address }
+                ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
+              InputArtifacts:
+              - Name: SourceArtifact
+              Name: Deploy-Prod
+              OutputArtifacts: []
+              Region: !Ref 'AWS::Region'
+              RunOrder: 1
+            Name: Deploy-Prod
+  RDSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties: 
+      GroupDescription: !Sub ${ProjectName}-SecurityGroup for RDS
+      GroupName: !Sub ${ProjectName}-SecurityGroup
+      SecurityGroupEgress: 
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: '-1' 
+      SecurityGroupIngress: 
+        - CidrIp: 0.0.0.0/0
+          FromPort: 5432
+          IpProtocol: tcp
+          ToPort: 5432
+      VpcId: !Ref 'VPC'
+  RDSInstanceProd:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: 20
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod:  7
+      CopyTagsToSnapshot: true
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: !Sub ${ProjectName}-prod
+      Engine: postgres
+      EngineVersion: '12.5'
+      DBSubnetGroupName: !Ref DBSubnetGroupName
+      VPCSecurityGroups: 
+      - !GetAtt RDSSecurityGroup.GroupId
+      MasterUsername: postgres
+      MasterUserPassword: ${DatabasePasswordProd}
+      MonitoringInterval: 0
+      PubliclyAccessible: true
+      StorageType: gp2
+  RDSInstanceStage:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: 20
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod:  7
+      CopyTagsToSnapshot: true
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: !Sub ${ProjectName}-stage
+      Engine: postgres
+      EngineVersion: '12.5'
+      DBSubnetGroupName: !Ref DBSubnetGroupName
+      VPCSecurityGroups: 
+      - !GetAtt RDSSecurityGroup.GroupId
+      MasterUsername: postgres
+      MasterUserPassword: ${DatabasePasswordStage}
+      MonitoringInterval: 0
+      PubliclyAccessible: true
+      StorageType: gp2
+  RDSInstanceTest:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: 20
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod:  7
+      CopyTagsToSnapshot: true
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: !Sub ${ProjectName}-test
+      Engine: postgres
+      EngineVersion: '12.5'
+      DBSubnetGroupName: !Ref DBSubnetGroupName
+      VPCSecurityGroups: 
+      - !GetAtt RDSSecurityGroup.GroupId
+      MasterUsername: postgres
+      MasterUserPassword: ${DatabasePasswordTest}
+      MonitoringInterval: 0
+      PubliclyAccessible: true
+      StorageType: gp2

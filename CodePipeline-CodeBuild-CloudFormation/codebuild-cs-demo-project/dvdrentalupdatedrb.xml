@@ -1,0 +1,816 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">	
+	<changeSet author="mikeolivas" id="1619029696370-01">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="staff_staff_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-02">
+        <createTable tableName="staff">
+            <column autoIncrement="true" name="staff_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="staff_pkey"/>
+            </column>
+            <column name="first_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(50)"/>
+            <column name="store_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(40)"/>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="picture" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-03">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/staff.csv" quotchar="&quot;" separator="," tableName="staff">
+            <column header="staff_id" name="staff_id" type="NUMERIC"/>
+            <column header="first_name" name="first_name" type="STRING"/>
+            <column header="last_name" name="last_name" type="STRING"/>
+            <column header="address_id" name="address_id" type="NUMERIC"/>
+            <column header="email" name="email" type="STRING"/>
+            <column header="store_id" name="store_id" type="NUMERIC"/>
+            <column header="active" name="active" type="BOOLEAN"/>
+            <column header="username" name="username" type="STRING"/>
+            <column header="password" name="password" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+            <column header="picture" name="picture" type="BLOB"/>
+        </loadData>
+        <rollback>delete from staff</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-04">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="customer_customer_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-05">
+        <createTable tableName="customer">
+            <column autoIncrement="true" name="customer_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_pkey"/>
+            </column>
+            <column name="store_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(50)"/>
+            <column name="address_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="activebool" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="('now'::text)::date" name="create_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone"/>
+            <column name="active" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-06">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/customer.csv" quotchar="&quot;" separator="," tableName="customer">
+            <column header="customer_id" name="customer_id" type="NUMERIC"/>
+            <column header="store_id" name="store_id" type="NUMERIC"/>
+            <column header="first_name" name="first_name" type="STRING"/>
+            <column header="last_name" name="last_name" type="STRING"/>
+            <column header="email" name="email" type="STRING"/>
+            <column header="address_id" name="address_id" type="NUMERIC"/>
+            <column header="activebool" name="activebool" type="BOOLEAN"/>
+            <column header="create_date" name="create_date" type="DATE"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+            <column header="active" name="active" type="NUMERIC"/>
+        </loadData>
+        <rollback>delete from customer</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-07">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="actor_actor_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-08">
+        <createTable tableName="actor">
+            <column autoIncrement="true" name="actor_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="actor_pkey"/>
+            </column>
+            <column name="first_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-09">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/actor.csv" quotchar="&quot;" separator="," tableName="actor">
+            <column header="actor_id" name="actor_id" type="NUMERIC"/>
+            <column header="first_name" name="first_name" type="STRING"/>
+            <column header="last_name" name="last_name" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from actor</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-10">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="category_category_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-11">
+        <createTable tableName="category">
+            <column autoIncrement="true" name="category_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="category_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-12">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/category.csv" quotchar="&quot;" separator="," tableName="category">
+            <column header="category_id" name="category_id" type="NUMERIC"/>
+            <column header="name" name="name" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from category</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-13">
+        <createTable tableName="film_actor">
+            <column name="actor_id" type="SMALLINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="film_actor_pkey"/>
+            </column>
+            <column name="film_id" type="SMALLINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="film_actor_pkey"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-14">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/film_actor.csv" quotchar="&quot;" separator="," tableName="film_actor">
+            <column header="actor_id" name="actor_id" type="NUMERIC"/>
+            <column header="film_id" name="film_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from film_actor</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-15">
+        <createTable tableName="film_category">
+            <column name="film_id" type="SMALLINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="film_category_pkey"/>
+            </column>
+            <column name="category_id" type="SMALLINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="film_category_pkey"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-16">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/film_category.csv" quotchar="&quot;" separator="," tableName="film_category">
+            <column header="film_id" name="film_id" type="NUMERIC"/>
+            <column header="category_id" name="category_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from film_category</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-17">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="address_address_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-18">
+        <createTable tableName="address">
+            <column autoIncrement="true" name="address_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="address_pkey"/>
+            </column>
+            <column name="address" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address2" type="VARCHAR(50)"/>
+            <column name="district" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="postal_code" type="VARCHAR(10)"/>
+            <column name="phone" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-19">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/address.csv" quotchar="&quot;" separator="," tableName="address">
+            <column header="address_id" name="address_id" type="NUMERIC"/>
+            <column header="address" name="address" type="STRING"/>
+            <column header="address2" name="address2" type="STRING"/>
+            <column header="district" name="district" type="STRING"/>
+            <column header="city_id" name="city_id" type="NUMERIC"/>
+            <column header="postal_code" name="postal_code" type="STRING"/>
+            <column header="phone" name="phone" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from address</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-20">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="city_city_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-21">
+        <createTable tableName="city">
+            <column autoIncrement="true" name="city_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="city_pkey"/>
+            </column>
+            <column name="city" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-22">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/city.csv" quotchar="&quot;" separator="," tableName="city">
+            <column header="city_id" name="city_id" type="NUMERIC"/>
+            <column header="city" name="city" type="STRING"/>
+            <column header="country_id" name="country_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from city</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-23">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="country_country_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-24">
+        <createTable tableName="country">
+            <column autoIncrement="true" name="country_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="country_pkey"/>
+            </column>
+            <column name="country" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-25">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/country.csv" quotchar="&quot;" separator="," tableName="country">
+            <column header="country_id" name="country_id" type="NUMERIC"/>
+            <column header="country" name="country" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from country</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-26">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="film_film_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-27">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="language_language_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-28">
+        <createTable tableName="language">
+            <column autoIncrement="true" name="language_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="language_pkey"/>
+            </column>
+            <column name="name" type="CHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-29">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/language.csv" quotchar="&quot;" separator="," tableName="language">
+            <column header="language_id" name="language_id" type="NUMERIC"/>
+            <column header="name" name="name" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from language</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-30">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="payment_payment_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-31">
+        <createTable tableName="payment">
+            <column autoIncrement="true" name="payment_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="payment_pkey"/>
+            </column>
+            <column name="customer_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="staff_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rental_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(5, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_date" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-32">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/payment.csv" quotchar="&quot;" separator="," tableName="payment">
+            <column header="payment_id" name="payment_id" type="NUMERIC"/>
+            <column header="customer_id" name="customer_id" type="NUMERIC"/>
+            <column header="staff_id" name="staff_id" type="NUMERIC"/>
+            <column header="rental_id" name="rental_id" type="NUMERIC"/>
+            <column header="amount" name="amount" type="NUMERIC"/>
+            <column header="payment_date" name="payment_date" type="DATE"/>
+        </loadData>
+        <rollback>delete from payment</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-33">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="rental_rental_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-34">
+        <createTable tableName="rental">
+            <column autoIncrement="true" name="rental_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rental_pkey"/>
+            </column>
+            <column name="rental_date" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inventory_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="return_date" type="TIMESTAMP without time zone"/>
+            <column name="staff_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-35">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/rental.csv" quotchar="&quot;" separator="," tableName="rental">
+            <column header="rental_id" name="rental_id" type="NUMERIC"/>
+            <column header="rental_date" name="rental_date" type="DATE"/>
+            <column header="inventory_id" name="inventory_id" type="NUMERIC"/>
+            <column header="customer_id" name="customer_id" type="NUMERIC"/>
+            <column header="return_date" name="return_date" type="DATE"/>
+            <column header="staff_id" name="staff_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from rental</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-36">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="inventory_inventory_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-37">
+        <createTable tableName="inventory">
+            <column autoIncrement="true" name="inventory_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="inventory_pkey"/>
+            </column>
+            <column name="film_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="store_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-38">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/inventory.csv" quotchar="&quot;" separator="," tableName="inventory">
+            <column header="inventory_id" name="inventory_id" type="NUMERIC"/>
+            <column header="film_id" name="film_id" type="NUMERIC"/>
+            <column header="store_id" name="store_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from inventory</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-39">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="store_store_id_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-40">
+        <createTable tableName="store">
+            <column autoIncrement="true" name="store_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="store_pkey"/>
+            </column>
+            <column name="manager_staff_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-41">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/store.csv" quotchar="&quot;" separator="," tableName="store">
+            <column header="store_id" name="store_id" type="NUMERIC"/>
+            <column header="manager_staff_id" name="manager_staff_id" type="NUMERIC"/>
+            <column header="address_id" name="address_id" type="NUMERIC"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+        </loadData>
+        <rollback>delete from store</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-42">
+        <pro:createFunction functionName="last_updated" path="objects/function/last_updated-bcd8b0c2.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists last_updated</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-43">
+        <createView fullDefinition="false" viewName="sales_by_store">SELECT (((c.city)::text || ','::text) || (cy.country)::text) AS store,
+    (((m.first_name)::text || ' '::text) || (m.last_name)::text) AS manager,
+    sum(p.amount) AS total_sales
+   FROM (((((((payment p
+     JOIN rental r ON ((p.rental_id = r.rental_id)))
+     JOIN inventory i ON ((r.inventory_id = i.inventory_id)))
+     JOIN store s ON ((i.store_id = s.store_id)))
+     JOIN address a ON ((s.address_id = a.address_id)))
+     JOIN city c ON ((a.city_id = c.city_id)))
+     JOIN country cy ON ((c.country_id = cy.country_id)))
+     JOIN staff m ON ((s.manager_staff_id = m.staff_id)))
+  GROUP BY cy.country, c.city, s.store_id, m.first_name, m.last_name
+  ORDER BY cy.country, c.city;</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-44">
+        <createView fullDefinition="false" viewName="staff_list">SELECT s.staff_id AS id,
+    (((s.first_name)::text || ' '::text) || (s.last_name)::text) AS name,
+    a.address,
+    a.postal_code AS "zip code",
+    a.phone,
+    city.city,
+    country.country,
+    s.store_id AS sid
+   FROM (((staff s
+     JOIN address a ON ((s.address_id = a.address_id)))
+     JOIN city ON ((a.city_id = city.city_id)))
+     JOIN country ON ((city.country_id = country.country_id)));</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-45">
+        <addForeignKeyConstraint baseColumnNames="manager_staff_id" baseTableName="store" constraintName="store_manager_staff_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="staff_id" referencedTableName="staff" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-46">
+        <createView fullDefinition="false" viewName="customer_list">SELECT cu.customer_id AS id,
+    (((cu.first_name)::text || ' '::text) || (cu.last_name)::text) AS name,
+    a.address,
+    a.postal_code AS "zip code",
+    a.phone,
+    city.city,
+    country.country,
+        CASE
+            WHEN cu.activebool THEN 'active'::text
+            ELSE ''::text
+        END AS notes,
+    cu.store_id AS sid
+   FROM (((customer cu
+     JOIN address a ON ((cu.address_id = a.address_id)))
+     JOIN city ON ((a.city_id = city.city_id)))
+     JOIN country ON ((city.country_id = country.country_id)));</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-47">
+        <createIndex indexName="idx_fk_address_id" tableName="customer">
+            <column name="address_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-48">
+        <createIndex indexName="idx_fk_store_id" tableName="customer">
+            <column name="store_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-49">
+        <createIndex indexName="idx_last_name" tableName="customer">
+            <column name="last_name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-50">
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="payment" constraintName="payment_customer_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="customer_id" referencedTableName="customer" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-51">
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="rental" constraintName="rental_customer_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="customer_id" referencedTableName="customer" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-52">
+        <addForeignKeyConstraint baseColumnNames="actor_id" baseTableName="film_actor" constraintName="film_actor_actor_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="actor_id" referencedTableName="actor" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-53">
+        <createIndex indexName="idx_actor_last_name" tableName="actor">
+            <column name="last_name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-54">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="film_category" constraintName="film_category_category_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="category_id" referencedTableName="category" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-55">
+        <createIndex indexName="idx_fk_film_id" tableName="film_actor">
+            <column name="film_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-56">
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="customer" constraintName="customer_address_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="address_id" referencedTableName="address" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-57">
+        <createIndex indexName="idx_fk_city_id" tableName="address">
+            <column name="city_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-58">
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="staff" constraintName="staff_address_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="address_id" referencedTableName="address" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-59">
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="store" constraintName="store_address_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="address_id" referencedTableName="address" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-60">
+        <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="address" constraintName="fk_address_city" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="city_id" referencedTableName="city" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-61">
+        <createIndex indexName="idx_fk_country_id" tableName="city">
+            <column name="country_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-62">
+        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="city" constraintName="fk_city" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="country_id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="molivas" id="63-1-createyeardomain">
+        <sql>
+        CREATE DOMAIN public."year" AS integer;
+        ALTER DOMAIN public."year" OWNER TO postgres;
+        ALTER DOMAIN public."year" ADD CONSTRAINT year_check CHECK (VALUE &gt;= 1901 AND VALUE &lt;=2155);
+        </sql>
+        <rollback>DROP DOMAIN if exists public.year</rollback>
+    </changeSet>
+    <changeSet author="molivas" id="64-2-creatempaa_ratingUDT">
+        <sql>
+        CREATE TYPE public.mpaa_rating AS ENUM (
+    'G',
+    'PG',
+    'PG-13',
+    'R',
+    'NC-17'
+);
+
+
+ALTER TYPE public.mpaa_rating OWNER TO postgres;
+        </sql>
+        <rollback>DROP TYPE if exists public.mpaa_rating</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-65">
+        <createTable tableName="film">
+            <column autoIncrement="true" name="film_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="film_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="release_year" type="YEAR"/>
+            <column name="language_id" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="3" name="rental_duration" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="4.99" name="rental_rate" type="numeric(4, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="length" type="SMALLINT"/>
+            <column defaultValueNumeric="19.99" name="replacement_cost" type="numeric(5, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="G" name="rating" type="MPAA_RATING"/>
+            <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="special_features" type="TEXT[]"/>
+            <column name="fulltext" type="TSVECTOR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-66">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/film.csv" quotchar="&quot;" separator="," tableName="film">
+            <column header="film_id" name="film_id" type="NUMERIC"/>
+            <column header="title" name="title" type="STRING"/>
+            <column header="description" name="description" type="STRING"/>
+            <column header="release_year" name="release_year" type="NUMERIC"/>
+            <column header="language_id" name="language_id" type="NUMERIC"/>
+            <column header="rental_duration" name="rental_duration" type="NUMERIC"/>
+            <column header="rental_rate" name="rental_rate" type="NUMERIC"/>
+            <column header="length" name="length" type="NUMERIC"/>
+            <column header="replacement_cost" name="replacement_cost" type="NUMERIC"/>
+            <column header="rating" name="rating" type="STRING"/>
+            <column header="last_update" name="last_update" type="DATE"/>
+            <column header="special_features" name="special_features" type="STRING"/>
+            <column header="fulltext" name="fulltext" type="STRING"/>
+        </loadData>
+        <rollback>delete from film</rollback>
+        <!--<rollback>delete from film returning *</rollback>-->
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-67">
+        <pro:createFunction functionName="_group_concat" path="objects/function/_group_concat-bdaf6a3f.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists _group_concat</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-68">
+        <pro:createFunction functionName="group_concat" path="objects/function/group_concat-417117e8.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP AGGREGATE if exists public.group_concat(text)</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-69">
+        <createIndex indexName="idx_fk_customer_id" tableName="payment">
+            <column name="customer_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-70">
+        <createIndex indexName="idx_fk_rental_id" tableName="payment">
+            <column name="rental_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-71">
+        <createIndex indexName="idx_fk_staff_id" tableName="payment">
+            <column name="staff_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-72">
+        <addForeignKeyConstraint baseColumnNames="staff_id" baseTableName="payment" constraintName="payment_staff_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="staff_id" referencedTableName="staff" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-73">
+        <createView fullDefinition="false" viewName="sales_by_film_category">SELECT c.name AS category,
+    sum(p.amount) AS total_sales
+   FROM (((((payment p
+     JOIN rental r ON ((p.rental_id = r.rental_id)))
+     JOIN inventory i ON ((r.inventory_id = i.inventory_id)))
+     JOIN film f ON ((i.film_id = f.film_id)))
+     JOIN film_category fc ON ((f.film_id = fc.film_id)))
+     JOIN category c ON ((fc.category_id = c.category_id)))
+  GROUP BY c.name
+  ORDER BY (sum(p.amount)) DESC;</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-74">
+        <createIndex indexName="idx_fk_inventory_id" tableName="rental">
+            <column name="inventory_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-75">
+        <createIndex indexName="idx_unq_rental_rental_date_inventory_id_customer_id" tableName="rental" unique="true">
+            <column name="rental_date"/>
+            <column name="inventory_id"/>
+            <column name="customer_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-76">
+        <addForeignKeyConstraint baseColumnNames="staff_id" baseTableName="rental" constraintName="rental_staff_id_key" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="staff_id" referencedTableName="staff" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-77">
+        <createIndex indexName="idx_store_id_film_id" tableName="inventory">
+            <column name="store_id"/>
+            <column name="film_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-78">
+        <addForeignKeyConstraint baseColumnNames="inventory_id" baseTableName="rental" constraintName="rental_inventory_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="inventory_id" referencedTableName="inventory" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-79">
+        <createIndex indexName="idx_unq_manager_staff_id" tableName="store" unique="true">
+            <column name="manager_staff_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-80">
+        <createView fullDefinition="false" viewName="actor_info">SELECT a.actor_id,
+    a.first_name,
+    a.last_name,
+    group_concat(DISTINCT (((c.name)::text || ': '::text) || ( SELECT group_concat((f.title)::text) AS group_concat
+           FROM ((film f
+             JOIN film_category fc_1 ON ((f.film_id = fc_1.film_id)))
+             JOIN film_actor fa_1 ON ((f.film_id = fa_1.film_id)))
+          WHERE ((fc_1.category_id = c.category_id) AND (fa_1.actor_id = a.actor_id))
+          GROUP BY fa_1.actor_id))) AS film_info
+   FROM (((actor a
+     LEFT JOIN film_actor fa ON ((a.actor_id = fa.actor_id)))
+     LEFT JOIN film_category fc ON ((fa.film_id = fc.film_id)))
+     LEFT JOIN category c ON ((fc.category_id = c.category_id)))
+  GROUP BY a.actor_id, a.first_name, a.last_name;</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-81">
+        <createView fullDefinition="false" viewName="film_list">SELECT film.film_id AS fid,
+    film.title,
+    film.description,
+    category.name AS category,
+    film.rental_rate AS price,
+    film.length,
+    film.rating,
+    group_concat((((actor.first_name)::text || ' '::text) || (actor.last_name)::text)) AS actors
+   FROM ((((category
+     LEFT JOIN film_category ON ((category.category_id = film_category.category_id)))
+     LEFT JOIN film ON ((film_category.film_id = film.film_id)))
+     JOIN film_actor ON ((film.film_id = film_actor.film_id)))
+     JOIN actor ON ((film_actor.actor_id = actor.actor_id)))
+  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-82">
+        <createView fullDefinition="false" viewName="nicer_but_slower_film_list">SELECT film.film_id AS fid,
+    film.title,
+    film.description,
+    category.name AS category,
+    film.rental_rate AS price,
+    film.length,
+    film.rating,
+    group_concat((((upper("substring"((actor.first_name)::text, 1, 1)) || lower("substring"((actor.first_name)::text, 2))) || upper("substring"((actor.last_name)::text, 1, 1))) || lower("substring"((actor.last_name)::text, 2)))) AS actors
+   FROM ((((category
+     LEFT JOIN film_category ON ((category.category_id = film_category.category_id)))
+     LEFT JOIN film ON ((film_category.film_id = film.film_id)))
+     JOIN film_actor ON ((film.film_id = film_actor.film_id)))
+     JOIN actor ON ((film_actor.actor_id = actor.actor_id)))
+  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;</createView>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-83">
+        <createIndex indexName="film_fulltext_idx" tableName="film">
+            <column name="fulltext"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-84">
+        <pro:createTrigger disabled="false" path="objects/trigger/film_fulltext_trigger.sql" relativeToChangelogFile="true" tableName="film" triggerName="film_fulltext_trigger"/>
+        <rollback>DROP TRIGGER if exists film_fulltext_trigger on public.film</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-85">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="film" constraintName="film_language_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="language_id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-86">
+        <createIndex indexName="idx_fk_language_id" tableName="film">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-87">
+        <createIndex indexName="idx_title" tableName="film">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-88">
+        <addForeignKeyConstraint baseColumnNames="film_id" baseTableName="inventory" constraintName="inventory_film_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="film_id" referencedTableName="film" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-89">
+        <addForeignKeyConstraint baseColumnNames="rental_id" baseTableName="payment" constraintName="payment_rental_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="CASCADE" referencedColumnNames="rental_id" referencedTableName="rental" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-90">
+        <addForeignKeyConstraint baseColumnNames="film_id" baseTableName="film_actor" constraintName="film_actor_film_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="film_id" referencedTableName="film" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-91">
+        <addForeignKeyConstraint baseColumnNames="film_id" baseTableName="film_category" constraintName="film_category_film_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="CASCADE" referencedColumnNames="film_id" referencedTableName="film" validate="true"/>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-92">
+        <pro:createFunction functionName="inventory_in_stock" path="objects/function/inventory_in_stock-36c990da.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists inventory_in_stock</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-93">
+        <pro:createFunction functionName="film_in_stock" path="objects/function/film_in_stock-2a8d38e6.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists film_in_stock</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-94">
+        <pro:createFunction functionName="film_not_in_stock" path="objects/function/film_not_in_stock-2a8d38e6.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists film_not_in_stock</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-95">
+        <pro:createFunction functionName="get_customer_balance" path="objects/function/get_customer_balance-4551a555.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists get_customer_balance</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-96">
+        <pro:createFunction functionName="inventory_held_by_customer" path="objects/function/inventory_held_by_customer-36c990da.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists inventory_held_by_customer</rollback>
+    </changeSet>
+    
+    <changeSet author="mikeolivas" id="1619029696370-97">
+        <pro:createFunction functionName="last_day" path="objects/function/last_day-e1943c90.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists last_day</rollback>
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-98">
+        <pro:createFunction functionName="rewards_report" path="objects/function/rewards_report-8f212e59.sql" relativeToChangelogFile="true"/>
+        <rollback>DROP function if exists rewards_report</rollback>    
+    </changeSet>
+    <changeSet author="mikeolivas" id="1619029696370-99">
+        <pro:createTrigger disabled="false" path="objects/trigger/last_updated.sql" relativeToChangelogFile="true" tableName="actor" triggerName="last_updated"/>
+        <rollback>DROP TRIGGER if exists last_updated on public.actor</rollback>    
+    </changeSet>
+    <includeAll path="sqlfiles"/>
+</databaseChangeLog>

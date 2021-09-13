@@ -1,0 +1,32 @@
+<!-- Changesets for updates -->
+<changeSet author="mikeo" id="100">
+    <createTable tableName="contractors">
+        <column autoIncrement="true" name="contractor_id" type="INTEGER">
+            <constraints nullable="false" primaryKey="true" primaryKeyName="contractor_pkey"/>
+        </column>
+        <column name="first_name" type="VARCHAR(45)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="last_name" type="VARCHAR(45)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="email" type="VARCHAR(50)"/>
+        <column defaultValueBoolean="true" name="active" type="BOOLEAN">
+            <constraints nullable="false"/>
+        </column>
+        <column name="username" type="VARCHAR(16)">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+</changeSet>
+<changeSet author="mikeo" id="101">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="data/contractors.csv" quotchar="&quot;" separator="," tableName="contractors">
+            <column header="contractor_id" name="contractor_id" type="NUMERIC"/>
+            <column header="first_name" name="first_name" type="STRING"/>
+            <column header="last_name" name="last_name" type="STRING"/>
+            <column header="email" name="email" type="STRING"/>
+            <column header="active" name="active" type="BOOLEAN"/>
+            <column header="username" name="username" type="STRING"/>
+        </loadData>
+        <rollback>delete from contractors</rollback>
+</changeSet>
