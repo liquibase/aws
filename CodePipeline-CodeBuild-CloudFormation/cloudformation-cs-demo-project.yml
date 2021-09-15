@@ -44,18 +44,21 @@ Parameters:
     Description: Enter your Liquibase Pro key here. If you don't have one, visit https://download.liquibase.org/liquibase-pro-trial-request-form/ to start a free trial!
     Type: String
   DatabaseUsernameProd:
+    Default: postgres
     Description: Database Username for Production
     Type: String
   DatabasePasswordProd:
     Description: Database Password for Production
     Type: String
   DatabaseUsernameStage:
+    Default: postgres
     Description: Database Username for Staging
     Type: String
   DatabasePasswordStage:
     Description: Database Password for Staging
     Type: String
   DatabaseUsernameTest:
+    Default: postgres
     Description: Database Username for Test
     Type: String
   DatabasePasswordTest:
