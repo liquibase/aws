@@ -38,35 +38,27 @@ Metadata:
         default: "Name of S3 Bucket housing Liquibase project files"
 Parameters:
   DBSubnetGroupName:
-    Default: 
     Description: A DB subnet group to associate with the DB instance. 
     Type: String
   LiquibaseProKey:
-    Default: 
     Description: Enter your Liquibase Pro key here. If you don't have one, visit https://download.liquibase.org/liquibase-pro-trial-request-form/ to start a free trial!
     Type: String
   DatabaseUsernameProd:
-    Default:
     Description: Database Username for Production
     Type: String
   DatabasePasswordProd:
-    Default:
     Description: Database Password for Production
     Type: String
   DatabaseUsernameStage:
-    Default:
     Description: Database Username for Staging
     Type: String
   DatabasePasswordStage:
-    Default:
     Description: Database Password for Staging
     Type: String
   DatabaseUsernameTest:
-    Default:
     Description: Database Username for Test
     Type: String
   DatabasePasswordTest:
-    Default:
     Description: Database Password for Test
     Type: String
   ProjectName:
@@ -76,7 +68,6 @@ Parameters:
     Description: Define the Name of the Project such as test/data etc. (Value must be comprised only of lowercase a-z, 0-9, .-)
     Type: String
   S3Bucket:
-    Default: 
     Description: Define the Name of the S3 Bucket containing CodeCommit contents
     Type: String
   VPC:
