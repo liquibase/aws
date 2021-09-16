@@ -39,10 +39,22 @@ Select "Choose file" and select `cloudformation-cs-demo-project.yml`.
 Enter the `Stack Name`.
 Enter the `ProjectName`. 
 Enter the `Name of S3 Bucket housing Liquibase project files`. NOTE: strip off the `s3://` URI preample and trailing slash. Just the bucket name.
-Enter the `LiqubiaseProKey`.
+Enter the `LiquibaseProKey`.
 Select a VPC for your new stack.
 Enter the corresponding Database Subnet Group Name for the VPC used previously.
 Enter a Username and Password for each RDS database. The default username is `postgres`. 
+
+Select `Next`. 
+
+On the next screen, simply accept the defaults. For example, there is no reason to select a different IAM if your account has the appropriate permissions to create required resources.
+
+Select `Next`.
+
+Verify the settings, acknowledge the creation of required IAM resources, and select `Create Stack`.
+
+### 3. Visit CodePipeline and approve changes for Test and Production
+
+Once CloudFormation completes the stack, CodePipeline will being the process. Navigate to CodePipeline in the Console and select `Pipelines`. You will see a new Pipeline named `
 
 
 
