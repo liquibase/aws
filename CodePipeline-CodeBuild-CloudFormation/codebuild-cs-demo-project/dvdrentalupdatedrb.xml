@@ -31,7 +31,6 @@
             <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="picture" type="BYTEA"/>
         </createTable>
     </changeSet>
     <changeSet author="mikeolivas" id="1619029696370-03">
@@ -46,7 +45,6 @@
             <column header="username" name="username" type="STRING"/>
             <column header="password" name="password" type="STRING"/>
             <column header="last_update" name="last_update" type="DATE"/>
-            <column header="picture" name="picture" type="BLOB"/>
         </loadData>
         <rollback>delete from staff</rollback>
     </changeSet>
@@ -555,29 +553,6 @@
     <changeSet author="mikeolivas" id="1619029696370-62">
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="city" constraintName="fk_city" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="country_id" referencedTableName="country" validate="true"/>
     </changeSet>
-    <changeSet author="molivas" id="63-1-createyeardomain">
-        <sql>
-        CREATE DOMAIN public."year" AS integer;
-        ALTER DOMAIN public."year" OWNER TO postgres;
-        ALTER DOMAIN public."year" ADD CONSTRAINT year_check CHECK (VALUE &gt;= 1901 AND VALUE &lt;=2155);
-        </sql>
-        <rollback>DROP DOMAIN if exists public.year</rollback>
-    </changeSet>
-    <changeSet author="molivas" id="64-2-creatempaa_ratingUDT">
-        <sql>
-        CREATE TYPE public.mpaa_rating AS ENUM (
-    'G',
-    'PG',
-    'PG-13',
-    'R',
-    'NC-17'
-);
-
-
-ALTER TYPE public.mpaa_rating OWNER TO postgres;
-        </sql>
-        <rollback>DROP TYPE if exists public.mpaa_rating</rollback>
-    </changeSet>
     <changeSet author="mikeolivas" id="1619029696370-65">
         <createTable tableName="film">
             <column autoIncrement="true" name="film_id" type="INTEGER">
@@ -587,7 +562,7 @@ ALTER TYPE public.mpaa_rating OWNER TO postgres;
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="TEXT"/>
-            <column name="release_year" type="YEAR"/>
+            <column name="release_year" type="TEXT"/>
             <column name="language_id" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
@@ -601,12 +576,12 @@ ALTER TYPE public.mpaa_rating OWNER TO postgres;
             <column defaultValueNumeric="19.99" name="replacement_cost" type="numeric(5, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="G" name="rating" type="MPAA_RATING"/>
+            <column defaultValue="G" name="rating" type="TEXT"/>
             <column defaultValueComputed="now()" name="last_update" type="TIMESTAMP without time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="special_features" type="TEXT[]"/>
-            <column name="fulltext" type="TSVECTOR">
+            <column name="special_features" type="TEXT"/>
+            <column name="fulltext" type="TEXT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
