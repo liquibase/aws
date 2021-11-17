@@ -145,7 +145,7 @@ Resources:
         Liquibase project and a "buildspec.yml" file.
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: registry.hub.docker.com/liquibase/liquibase:4.4.2
+        Image: registry.hub.docker.com/liquibase/liquibase:latest
         ImagePullCredentialsType: SERVICE_ROLE
         PrivilegedMode: true
         Type: LINUX_CONTAINER
