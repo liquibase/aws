@@ -16,6 +16,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - liquibase --defaultsFile=liquibase.properties checks run
       - liquibase --defaultsFile=liquibase.properties validate
       - liquibase --defaultsFile=liquibase.properties tag codebuild-$CODEBUILD_BUILD_NUMBER
       - liquibase --defaultsFile=liquibase.properties status --verbose
