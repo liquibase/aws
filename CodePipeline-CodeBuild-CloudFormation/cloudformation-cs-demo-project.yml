@@ -81,7 +81,7 @@ Resources:
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: AWS secrets for project
-      Name: !Sub ${ProjectName}
+      Name: LIQUIBASEPRO_DEMO
       SecretString: !Sub '{"USERNAME_PROD":"${DatabaseUsernameProd}","PASSWORD_PROD":"${DatabasePasswordProd}","LIQUIBASE_PRO_KEY":"${LiquibaseProKey}","USERNAME_TEST":"${DatabaseUsernameTest}","PASSWORD_TEST":"${DatabasePasswordTest}","USERNAME_STAGE":"${DatabaseUsernameStage}","PASSWORD_STAGE":"${DatabasePasswordStage}"}'
   CodeCommitRepository:
     Type: AWS::CodeCommit::Repository
@@ -291,7 +291,7 @@ Resources:
                 Version: '1'
               Configuration:
                 EnvironmentVariables: !Sub 
-                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_TEST","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_TEST","type":"SECRETS_MANAGER"}]'
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"LIQUIBASEPRO_DEMO:USERNAME_TEST","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"LIQUIBASEPRO_DEMO:PASSWORD_TEST","type":"SECRETS_MANAGER"}]'
                 - { Endpoint: !GetAtt RDSInstanceTest.Endpoint.Address }
                 ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
               InputArtifacts:
@@ -322,7 +322,7 @@ Resources:
                 Version: '1'
               Configuration:
                 EnvironmentVariables: !Sub 
-                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_STAGE","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_STAGE","type":"SECRETS_MANAGER"}]'
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"LIQUIBASEPRO_DEMO:USERNAME_STAGE","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"LIQUIBASEPRO_DEMO:PASSWORD_STAGE","type":"SECRETS_MANAGER"}]'
                 - { Endpoint: !GetAtt RDSInstanceStage.Endpoint.Address }
                 ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
               InputArtifacts:
@@ -353,7 +353,7 @@ Resources:
                 Version: '1'
               Configuration:
                 EnvironmentVariables: !Sub 
-                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"${ProjectName}:USERNAME_PROD","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"${ProjectName}:PASSWORD_PROD","type":"SECRETS_MANAGER"}]'
+                - '[{"name":"LIQUIBASE_COMMAND_URL","value":"jdbc:postgresql://${Endpoint}:5432/postgres","type":"PLAINTEXT"},{"name":"LIQUIBASE_COMMAND_USERNAME","value":"LIQUIBASEPRO_DEMO:USERNAME_PROD","type":"SECRETS_MANAGER"},{"name":"LIQUIBASE_COMMAND_PASSWORD","value":"LIQUIBASEPRO_DEMO:PASSWORD_PROD","type":"SECRETS_MANAGER"}]'
                 - { Endpoint: !GetAtt RDSInstanceProd.Endpoint.Address }
                 ProjectName: !Sub '${ProjectName}-CodeBuild-Job'
               InputArtifacts:
