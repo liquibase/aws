@@ -391,7 +391,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroupName
       VPCSecurityGroups: 
       - !GetAtt RDSSecurityGroup.GroupId
-      MasterUsername: postgres
+      MasterUsername: !Sub ${DatabaseUsernameProd}
       MasterUserPassword: !Sub ${DatabasePasswordProd}
       MonitoringInterval: 0
       PubliclyAccessible: true
@@ -410,7 +410,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroupName
       VPCSecurityGroups: 
       - !GetAtt RDSSecurityGroup.GroupId
-      MasterUsername: postgres
+      MasterUsername: !Sub ${DatabaseUsernameStage}
       MasterUserPassword: !Sub ${DatabasePasswordStage}
       MonitoringInterval: 0
       PubliclyAccessible: true
@@ -429,7 +429,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroupName
       VPCSecurityGroups: 
       - !GetAtt RDSSecurityGroup.GroupId
-      MasterUsername: postgres
+      MasterUsername: !Sub ${DatabaseUsernameTest}
       MasterUserPassword: !Sub ${DatabasePasswordTest}
       MonitoringInterval: 0
       PubliclyAccessible: true
